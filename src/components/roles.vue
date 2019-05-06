@@ -9,14 +9,20 @@
     <!-- 添加用户 -->
     <el-row>
       <el-col :span="24">
-        <el-button type="danger" plain>添加用户</el-button>
+        <el-button type="danger" plain @click='addRoles'>添加用户</el-button>
       </el-col>
     </el-row>
     <!-- 表格 -->
-    <el-table :data="tableData" style="width: 100%" class='users-table'>
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+    <el-table :data="tableData" border style="width: 100%" class='users-table'>
+        <el-table-column label="" width="30">&lt;</el-table-column>
+        <el-table-column prop="id" label="#" width="30"></el-table-column>
+      <el-table-column prop="roleName" label="角色名称" width="300"></el-table-column>
+      <el-table-column prop="roleDec" label="角色描述" width="300"></el-table-column>
+      <el-table-column label="操作">
+          <el-button type="primary" icon="el-icon-edit" plain class="mini"></el-button>
+          <el-button type="danger" icon="el-icon-check" plain class="mini"></el-button>
+          <el-button type="danger" icon="el-icon-delete" plain class="mini"></el-button>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -27,31 +33,44 @@ export default {
   data() {
       return {
         tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+          id:"1",
+          roleName: '2016-05-02',
+          roleDec: '王小虎',
         }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
+          id:"1",
+          roleName: '2016-05-04',
+          roleDec: '王小虎',
         }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
+          id:"1",
+          roleName: '2016-05-01',
+          roleDec: '王小虎',
         }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
+          id:"1",
+          roleName: '2016-05-03',
+          roleDec: '王小虎',
         }]
       }
     },
     methods: {
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      }
+        //   添加角色
+        addRoles(){
+            this.$prompt('角色名称','添加角色', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputPattern: '',
+          inputErrorMessage: '邮箱格式不正确',
+        }).then(({ value }) => {
+          this.$message({
+            type: 'success',
+            message: '你的邮箱是: ' + value
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消输入'
+          });       
+        });
+        }
     },
 };
 </script>

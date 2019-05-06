@@ -7,10 +7,16 @@
       <el-breadcrumb-item>商品列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 表格 -->
-    <el-table :data="tableData" style="width: 100%" class='users-table'>
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+    <el-table :data="tableData" border style="width: 100%" class='users-table'>
+      <el-table-column prop="id" label="#" width="30"></el-table-column>
+      <el-table-column prop="name" label="商品名称" width="400"></el-table-column>
+      <el-table-column prop="price" label="商品价格(元)" width="180"></el-table-column>
+      <el-table-column prop="weigth" label="商品重量" width="180"></el-table-column>
+      <el-table-column prop="date" label="创建时间" width="120"></el-table-column>
+      <el-table-column label="操作">
+          <el-button type="primary" icon="el-icon-edit" plain class="mini"></el-button>
+          <el-button type="danger" icon="el-icon-check" plain class="mini"></el-button>
+      </el-table-column>
     </el-table>
     <!-- 分页 -->
     <el-pagination
@@ -33,21 +39,29 @@ export default {
   data() {
       return {
         tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+            id:'1',
+            name: '王小虎',
+            price:'188',
+            weigth:'30',
+            date: '2016-05-02',
         }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
+            id:'1',
+            name: '王小虎',
+            price:'188',
+            weigth:'30',
+            date: '2016-05-04',
         }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
+            id:'1',
+            name: '王小虎',
+            price:'188',
+            weigth:'30',
+            date: '2016-05-01',
         }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
+            id:'1',
+            name: '王小虎',
+            price:'188',
+            weigth:'30',
+            date: '2016-05-03',
         }]
       }
     },
