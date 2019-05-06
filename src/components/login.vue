@@ -4,13 +4,13 @@
             <h3>用户登录</h3>
             <el-form label-position="top" label-width="80px">
                 <el-form-item label="账户">
-                    <el-input></el-input>
+                    <el-input v-model="username"></el-input>
                 </el-form-item>
                 <el-form-item label="密码">
-                    <el-input></el-input>
+                    <el-input v-model="password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary">登录</el-button>
+                    <el-button type="primary" @click="getLogin">登录</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -19,7 +19,22 @@
 
 <script>
 export default {
-    name:'login'
+    name:'login',
+    data() {
+        return {
+            username:'',
+            password:''
+        }
+    },
+    methods: {
+        getLogin(){
+            if(this.username=='' || this.password==""){
+                this.$message.warning('用户名或者密码不能为空')
+                return
+            }
+
+        }
+    },
 }
 </script>
 
