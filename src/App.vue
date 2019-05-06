@@ -1,13 +1,20 @@
 <template>
-  
+    <router-view></router-view>
 </template>
 
 <script>
 export default {
-
+    name:'App'
 }
 </script>
 
-<style>
-
+<style lang='scss'>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html,body{
+        height:100%;
+}
 </style>
