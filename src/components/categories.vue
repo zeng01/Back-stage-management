@@ -3,13 +3,13 @@
     <!-- 面包屑菜单 -->
     <el-breadcrumb separator-class="el-icon-arrow-right" class='users-menu'>
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-      <el-breadcrumb-item>角色列表</el-breadcrumb-item>
+      <el-breadcrumb-item>商品管理</el-breadcrumb-item>
+      <el-breadcrumb-item>商品列表</el-breadcrumb-item>
     </el-breadcrumb>
-    <!-- 添加用户 -->
+    <!-- 添加分类 -->
     <el-row>
       <el-col :span="24">
-        <el-button type="danger" plain>添加用户</el-button>
+        <el-button type="warning" plain>添加分类</el-button>
       </el-col>
     </el-row>
     <!-- 表格 -->
@@ -58,7 +58,7 @@ export default {
 
 <style lang='scss'>
 .users-menu{
-   line-height: 36px;
+    line-height: 36px;
     background: #c5dde8;
     margin-bottom: 20px;
 }

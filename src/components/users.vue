@@ -76,13 +76,13 @@ export default {
 .users-menu{
     line-height: 30px;
     background: #87a3bd;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     .el-breadcrumb__inner{
         color:#fff;
     }
 }
 .users-table{
-    margin-top: 10px;
+    margin-top: 20px;
 }
 .users-page{
     background: #fff;

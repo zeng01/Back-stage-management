@@ -52,15 +52,12 @@ export default {
 
 <style lang='scss'>
 .users-menu{
-    line-height: 30px;
-    background: #87a3bd;
-    margin-bottom: 10px;
-    .el-breadcrumb__inner{
-        color:#fff;
-    }
+    line-height: 36px;
+    background: #c5dde8;
+    margin-bottom: 20px;
 }
 .users-table{
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 </style>
