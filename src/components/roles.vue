@@ -4,17 +4,12 @@
     <el-breadcrumb separator-class="el-icon-arrow-right" class='users-menu'>
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
+      <el-breadcrumb-item>角色列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 添加用户 -->
     <el-row>
-      <el-col :span="6">
-        <el-input placeholder="请输入内容">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-input>
-      </el-col>
-      <el-col :span="12">
-        <el-button type="success" plain>添加用户</el-button>
+      <el-col :span="24">
+        <el-button type="danger" plain>添加用户</el-button>
       </el-col>
     </el-row>
     <!-- 表格 -->
@@ -23,17 +18,6 @@
       <el-table-column prop="name" label="姓名" width="180"></el-table-column>
       <el-table-column prop="address" label="地址"></el-table-column>
     </el-table>
-    <!-- 分页 -->
-    <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="1"
-      :page-sizes="[5, 10, 15, 20]"
-      :page-size="5"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="20" class='users-page'>
-    </el-pagination>
   </div>
 </template>
 
@@ -77,6 +61,7 @@ export default {
     line-height: 30px;
     background: #87a3bd;
     margin-bottom: 10px;
+    
     .el-breadcrumb__inner{
         color:#fff;
     }

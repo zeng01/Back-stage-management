@@ -5,7 +5,7 @@
         <el-col :span="4">
           <img src="../assets/images/logo.png" alt="">
         </el-col>
-        <el-col :span="19">后台管理系统</el-col>
+        <el-col :span="19" class='header-center'>后台管理系统</el-col>
         <el-col :span="1">
           <el-button type="danger" icon="el-icon-delete" circle></el-button>
         </el-col>
@@ -29,20 +29,26 @@
               <i class="el-icon-location"></i>
               <span>权限管理</span>
             </template>
-              <el-menu-item index="2-1">
-                <i class="el-icon-menu"></i>权限列表
+              <el-menu-item index="roles">
+                <i class="el-icon-menu"></i>角色列表
                 </el-menu-item>
-                <el-menu-item index="2-2">
-                <i class="el-icon-menu"></i>权限名称
+                <el-menu-item index="rights">
+                <i class="el-icon-menu"></i>权限列表
                 </el-menu-item>
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>商品管理</span>
             </template>
-              <el-menu-item index="3-1">
-                <i class="el-icon-menu"></i>用户列表
+              <el-menu-item index="goods">
+                <i class="el-icon-menu"></i>商品列表
+                </el-menu-item>
+                <el-menu-item index="params">
+                <i class="el-icon-menu"></i>分类参数
+                </el-menu-item>
+                <el-menu-item index="categories">
+                <i class="el-icon-menu"></i>商品分类
                 </el-menu-item>
           </el-submenu>
           <el-submenu index="4">
@@ -74,13 +80,22 @@ export default {
 .container {
   height: 100%;
   .index-header {
-    background: #74b8b8;
+    background: #92b2c4;
+    line-height: 60px;
+    img{
+      height: 60px;
+    }
+    .header-center{
+      color:#fff;
+      font-size: 26px;
+      text-align: center;
+    }
   }
   .index-aside {
     background: #fff;
   }
   .index-main {
-    background: #b3d7dd;
+    background: #dee9f3;
   }
 }
 </style>
