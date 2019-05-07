@@ -17,7 +17,7 @@
         <el-table-column label="" width="30">&lt;</el-table-column>
         <el-table-column prop="id" label="#" width="30"></el-table-column>
       <el-table-column prop="roleName" label="角色名称" width="300"></el-table-column>
-      <el-table-column prop="roleDec" label="角色描述" width="300"></el-table-column>
+      <el-table-column prop="roleDesc" label="角色描述" width="300"></el-table-column>
       <el-table-column label="操作">
           <el-button type="primary" icon="el-icon-edit" plain class="mini"></el-button>
           <el-button type="danger" icon="el-icon-check" plain class="mini"></el-button>
@@ -32,23 +32,7 @@ export default {
   name: "users",
   data() {
       return {
-        tableData: [{
-          id:"1",
-          roleName: '2016-05-02',
-          roleDec: '王小虎',
-        }, {
-          id:"1",
-          roleName: '2016-05-04',
-          roleDec: '王小虎',
-        }, {
-          id:"1",
-          roleName: '2016-05-01',
-          roleDec: '王小虎',
-        }, {
-          id:"1",
-          roleName: '2016-05-03',
-          roleDec: '王小虎',
-        }]
+        tableData: []
       }
     },
     methods: {
@@ -71,6 +55,15 @@ export default {
           });       
         });
         }
+    },
+    created() {
+      this.$axios.get('roles').then(res=>{
+        console.log(res.data.data);
+        if(res.data.meta.status==200){
+          // this.tableData=res.data.data
+        }
+        
+      })
     },
 };
 </script>

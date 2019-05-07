@@ -37,10 +37,26 @@ const routes=[
     },
 ]
 
+
+
 // 创建 router 实例，
 const router = new VueRouter({
     routes 
   })
+
+  router.beforeEach((to, from, next) => {
+    if (to.path === '/login') {
+      next();
+    } else {
+      let token = localStorage.getItem('token');
+   
+      if (token === 'null' || token === '') {
+        next('/login');
+      } else {
+        next();
+      }
+    }
+  });
 
 // 暴露router
 export default router

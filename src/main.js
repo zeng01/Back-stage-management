@@ -6,6 +6,10 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
+// 导入axios
+import myAxios from './assets/axios/myaxios.js'
+Vue.prototype.$axios=myAxios
+
 Vue.config.productionTip = false
 
 // 导入router

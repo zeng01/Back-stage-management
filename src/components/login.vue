@@ -32,7 +32,18 @@ export default {
                 this.$message.warning('用户名或者密码不能为空')
                 return
             }
-
+            this.$axios.post('login',{
+                username:this.username,
+                password:this.password
+            }).then(res=>{
+                if(res.data.meta.status==200){
+                    this.$message.success(res.data.meta.msg)
+                    localStorage.setItem('token',res.data.data.token)
+                    this.$router.push('/')
+                }else{
+                    this.$message.error(res.data.meta.msg)
+                }
+            })
         }
     },
 }

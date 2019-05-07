@@ -9,9 +9,9 @@
     <!-- 表格 -->
     <el-table :data="tableData" border style="width: 100%" class='users-table'>
       <el-table-column prop="id" label="#" width="30"></el-table-column>
-      <el-table-column prop="name" label="权限名称" width="180"></el-table-column>
+      <el-table-column prop="authName" label="权限名称" width="180"></el-table-column>
       <el-table-column prop="path" label="路径" width="180"></el-table-column>
-      <el-table-column prop="stratum" label="层级"></el-table-column>
+      <el-table-column prop="level" label="层级"></el-table-column>
     </el-table>
   </div>
 </template>
@@ -21,27 +21,7 @@ export default {
   name: "users",
   data() {
       return {
-        tableData: [{
-          id: '2',
-          name: '王小虎',
-          path:'goods',
-          stratum: '一级'
-        }, {
-          id: '4',
-          name: '王小虎',
-          path:'goods',
-          stratum: '一级'
-        }, {
-          id: '1',
-          name: '王小虎',
-          path:'goods',
-          stratum: '一级'
-        }, {
-          id: '3',
-          name: '王小虎',
-          path:'goods',
-          stratum: '一级'
-        }]
+        tableData: []
       }
     },
     methods: {
@@ -51,6 +31,13 @@ export default {
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
       }
+    },
+    created() {
+      this.$axios.get('rights/:type=list').then(res=>{
+        console.log(res);
+        
+        this.tableData=res.data.data
+      })
     },
 };
 </script>
