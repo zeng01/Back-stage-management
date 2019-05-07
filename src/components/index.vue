@@ -54,13 +54,21 @@
           <el-submenu index="4">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>订单管理</span>
             </template>
-              <el-menu-item index="4-1">
-                <i class="el-icon-menu"></i>用户列表
+              <el-menu-item index="order">
+                <i class="el-icon-menu"></i>订单列表
                 </el-menu-item>
           </el-submenu>
-        
+          <el-submenu index="5">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>数据统计</span>
+            </template>
+              <el-menu-item index="report">
+                <i class="el-icon-menu"></i>数据报表
+                </el-menu-item>
+          </el-submenu>
         </el-menu>
       </el-aside>
       <el-main class="index-main">

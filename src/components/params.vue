@@ -8,9 +8,9 @@
     </el-breadcrumb>
     <!-- 警告 -->
     <el-alert
-        title="警告提示的文案"
+        title="注意"
         type="warning"
-        description="文字说明文字说明文字说明文字说明文字说明文字说明"
+        description="只允许为第三级分类设置相关参数！"
         show-icon>
     </el-alert>
     <!-- 级联 -->

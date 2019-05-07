@@ -14,20 +14,25 @@ import rights from './components/rights.vue'
 import goods from './components/goods.vue'
 import params from './components/params.vue'
 import categories from './components/categories.vue'
+import order from './components/order.vue'
+import report from './components/report.vue'
 
 // 写规则
 const routes=[
     {path:'/login',component:login},
-    // {path:'/',redirect: '/login'},
+    
     {
         path:'/',component:index,
         children:[
+            {path:'',redirect: 'users'},
             {path:'users',component:users},
             {path:'roles',component:roles},
             {path:'rights',component:rights},
             {path:'goods',component:goods},
             {path:'params',component:params},
             {path:'categories',component:categories},
+            {path:'order',component:order},
+            {path:'report',component:report},
         ]
     },
 ]
