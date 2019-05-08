@@ -6,8 +6,8 @@ axios.defaults.baseURL='http://localhost:8888/api/private/v1/'
 // 添加请求拦截器，在请求头中加token
 axios.interceptors.request.use(
     config => {
-      if (localStorage.getItem('token')) {
-        config.headers.Authorization = localStorage.getItem('token');
+      if (sessionStorage.getItem('token')) {
+        config.headers.Authorization = sessionStorage.getItem('token');
       }
    
       return config;

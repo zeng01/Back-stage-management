@@ -7,7 +7,7 @@
         </el-col>
         <el-col :span="19" class='header-center'>后台管理系统</el-col>
         <el-col :span="1">
-          <el-button type="danger" icon="el-icon-delete" circle></el-button>
+          <el-button type="danger" icon="el-icon-delete" circle @click="logout"></el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -81,7 +81,29 @@
 <script>
 export default {
   name: "index",
-  
+  beforeCreate() {
+    if(!sessionStorage.getItem('token')){
+      this.$message.error('请先登录')
+    }
+  },
+  methods: {
+    logout(){
+      
+      this.$confirm('真的要走吗?', '提示',{
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '退出成功!'
+          });
+          sessionStorage.removeItem('token')
+        this.$router.push('login')
+        })
+      
+    }
+  },
 };
 </script>
 

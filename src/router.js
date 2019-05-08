@@ -44,11 +44,12 @@ const router = new VueRouter({
     routes 
   })
 
+  // 导航守卫
   router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
       next();
     } else {
-      let token = localStorage.getItem('token');
+      let token = sessionStorage.getItem('token');
    
       if (token === 'null' || token === '') {
         next('/login');
