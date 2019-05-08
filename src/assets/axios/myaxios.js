@@ -7,7 +7,7 @@ axios.defaults.baseURL='http://localhost:8888/api/private/v1/'
 axios.interceptors.request.use(
     config => {
       if (sessionStorage.getItem('token')) {
-        config.headers.Authorization = sessionStorage.getItem('token');
+        // config.headers.Authorization = sessionStorage.getItem('token');
       }
    
       return config;

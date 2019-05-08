@@ -14,25 +14,25 @@
         </el-input>
       </el-col>
       <el-col :span="12">
-        <el-button type="success" plain @click='dialogVisible = true'>添加用户</el-button>
-        <el-dialog title="添加用户" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-          <el-form ref="form" :model="form" label-width="80px">
-            <el-form-item label="用户名">
-              <el-input v-model="form.username"></el-input>
+        <el-button type="success" plain @click='addVisible = true'>添加用户</el-button>
+        <el-dialog title="添加用户" :visible.sync="addVisible" width="40%" :before-close="handleClose">
+          <el-form ref="addForm" :model="addForm" :rules='addRules' label-width="80px">
+            <el-form-item label="用户名" prop='username'>
+              <el-input v-model="addForm.username"></el-input>
             </el-form-item>
-            <el-form-item label="密码">
-              <el-input v-model="form.password"></el-input>
+            <el-form-item label="密码" prop='password'>
+              <el-input v-model="addForm.password"></el-input>
             </el-form-item>
             <el-form-item label="邮箱">
-              <el-input v-model="form.email"></el-input>
+              <el-input v-model="addForm.email"></el-input>
             </el-form-item>
             <el-form-item label="电话">
-              <el-input v-model="form.mobile"></el-input>
+              <el-input v-model="addForm.mobile"></el-input>
             </el-form-item>
           </el-form>
           <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary"  @click="dialogVisible = false">确 定</el-button>
+            <el-button @click="addVisible = false">取 消</el-button>
+            <el-button type="primary"  @click="submitForm('addForm')">确 定</el-button>
           </span>
         </el-dialog>
       </el-col>
@@ -48,13 +48,13 @@
       <el-table-column prop="mobile" label="电话" width="240"></el-table-column>
       <el-table-column label="用户状态" width="80">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-switch v-model="scope.row.mg_state" @change='statusChange(scope.row)' active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </template>  
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-edit" plain class="mini" @click="handleEdit(scope.$index, scope.row)"></el-button>
-          <el-button type="danger" icon="el-icon-check" plain class="mini" @click="handleEdit(scope.$index, scope.row)"></el-button>
+          <el-button type="danger" icon="el-icon-check" plain class="mini" @click="handleInfo(scope.$index, scope.row)"></el-button>
           <el-button type="danger" icon="el-icon-delete" plain class="mini" @click="handleDelete(scope.$index, scope.row)"></el-button>
         </template>
       </el-table-column>
@@ -70,6 +70,29 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total" class='users-page'>
     </el-pagination>
+    <el-dialog title="编辑用户" :visible.sync="editVisible" width="40%" :before-close="handleClose">
+          <el-form :model="editForm" label-width="80px">
+            <el-form-item label="邮箱">
+              <el-input v-model="editForm.edit_email"></el-input>
+            </el-form-item>
+            <el-form-item label="电话">
+              <el-input v-model="editForm.edit_mobile"></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="editVisible = false">取 消</el-button>
+            <el-button type="primary"  @click="editUser()">确 定</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog title="收货地址" :visible.sync="dialogTableVisible" width="60%">
+          <el-table :data="gridData" border>
+            <el-table-column property="id" label="#" width="150"></el-table-column>
+            <el-table-column property="roles_id" label="角色ID" width="150"></el-table-column>
+            <el-table-column property="name" label="用户名" width="200"></el-table-column>
+            <el-table-column property="email" label="邮箱" width="150"></el-table-column>
+            <el-table-column property="mobile" label="电话"></el-table-column>
+          </el-table>
+        </el-dialog>
   </div>
 </template>
 
@@ -90,35 +113,45 @@ export default {
       total:undefined,
 
       // 数据
-        tableData: [],
+      tableData: [],
 
-                dialogVisible:false,
-        form: {
+      // 添加数据验证
+      addVisible:false,
+      addForm: {
           username: '',
           password:'',
           email:'',
           mobile:''
         },
         // 校验规则
-      // rules: {
-      //   username: [
-      //   { required: true, //是否必填
-      //     message: '用户名不能为空', //规则
-      //     trigger: 'blur'  //何事件触发
-      //   },
-      //   //可以设置双重验证标准
-      //   { min: 6, max: 12,  message: '长度在 6 到 12 个字符', }
-      // ],
-      // password: [
-      //   { required: true, //是否必填
-      //     message: '密码不能为空', //规则
-      //     trigger: 'blur'  //何事件触发
-      //   },
-      //   //可以设置双重验证标准
-      //   { min: 6, max: 12,  message: '长度在 6 到 12 个字符', }
-      // ]
-      // },
+      addRules: {
+        username: [
+          { required: true, message: '用户名不能为空',trigger: 'blur' },
+          { min: 5, max: 12,  message: '长度在 6 到 12 个字符', }
+        ],
+        password: [
+          { required: true, message: '密码不能为空', trigger: 'blur'},
+          { min: 6, max: 12,  message: '长度在 6 到 12 个字符', }
+        ]
+      },
+      // 编辑用户
+      editVisible:false,
+      editForm:{
+        id:'',
+        edit_email:'',
+        edit_mobile:''
+      },
+      // 用户信息
+      gridData: [{
+          id:'',
+          roles_id:'',
+          email: '',
+          name: '',
+          mobile: ''
+        }],
+        dialogTableVisible: false,
       }
+      
     },
     methods: {
       // 获取用户列表
@@ -138,69 +171,88 @@ export default {
 
       // 分页
       handleSizeChange(val) {
-        this.pagesize=val
+        this.usersData.pagesize=val
         this.getUsersList()
       },
       handleCurrentChange(val) {
-         this.pagenum=val
+         this.usersData.pagenum=val
         this.getUsersList()
       },
+      // 关闭遮罩层
       handleClose() {
-        console.log('000');
+       this.addVisible=false
         
-      },
-      addUsers(){
-        if(this.form.username==""||this.form.password==''){
-          this.$message.error('用户名或者密码不能为空')
-        }
-        this.$axios.post('users',{
-          username:this.form.username,
-          password:this.form.password,
-          email:this.form.email,
-          mobile:this.form.mobile
-        }).then(res=>{
-          console.log(res);
-          if(res.data.meta.status==200){
-            this.$message.error(res.data.meta.msg)
-            this.dialogVisible=true;
-            this.getUsersList();
-            this.form={}
-          }else{
-            this.$message.error(res.data.meta.msg)
-          }
-          
-        })
       },
 
-      // 操作时的回调函数
-      handleEdit(index,row){
-        console.log(index,row);
-        
+      // 添加用户
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+             this.$request.addUsers(this.addForm).then(res=>{
+                if(res.data.meta.status==201){
+                  this.addVisible=false;
+                  this.getUsersList();
+                  this.$refs[formName].resetFields();
+                  this.addForm.email=''
+                  this.addForm.mobile=''
+                }
+              })
+          } else {
+            this.$message.error("数据格式不对!!!")
+            return false;
+          }
+        });
       },
+
+      // 修改状态
+      statusChange(row){
+        this.$request.updateStatus({uId:row.id,type:row.mg_state})
+      },
+
+
+      //  编辑用户
+      handleEdit(index,row){
+        this.editForm.id=row.id
+        this.editForm.edit_email=row.email
+        this.editForm.edit_mobile=row.mobile
+        this.editVisible=true
+      },
+      editUser(){
+          console.log(this.editForm);
+          this.$request.editUser(this.editForm.id).then(res=>{
+            this.editVisible=false
+            console.log(res);
+            
+          })
+          
+        },
+
+
+      // 删除用户
       handleDelete(index,row){
         console.log(index,row);
-        
+        this.$request.deleteUsers(row.id).then(res=>{
+          if(res.data.meta.status==200){
+                  this.getUsersList();
+            }
+        })
+      },
+      // 用户信息
+      handleInfo(index,row){
+        this.dialogTableVisible=true
+        this.$request.userInfo(row.id).then(res=>{
+            this.editVisible=false
+            console.log(res);
+            this.getData[0]=res.data.data
+            this.getData.id=res.data.data.id
+            this.getData.roles_id=res.data.data.rid
+            this.getData.email=res.data.data
+            this.getData.name=res.data.data.username
+            this.getData.mobile=res.data.data.mobile
+          })
       }
-
-      // addUsers(){
-          
-        //   this.$prompt('角色名称','添加角色', {
-        //   confirmButtonText: '确定',
-        //   cancelButtonText: '取消',
-        //   inputPattern: '',
-        //   inputErrorMessage: '邮箱格式不正确',
-        // }).then(({ value }) => {
-        //   this.$message({
-        //     type: 'success',
-        //     message: '你的邮箱是: ' + value
-        //   });
-        // }).catch(() => {
-        //   this.$message({
-        //     type: 'info',
-        //     message: '取消输入'
-        //   });       
-        // });
-        // }
+      
+      
     },
     created() {
     this.getUsersList()
