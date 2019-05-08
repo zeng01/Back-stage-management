@@ -10,6 +10,10 @@ Vue.use(ElementUI);
 import myAxios from './assets/axios/myaxios.js'
 Vue.prototype.$axios=myAxios
 
+// 导入抽取的网络请求
+import request from './libs/http'
+Vue.use(request)
+
 Vue.config.productionTip = false
 
 // 导入router
