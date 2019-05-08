@@ -99,7 +99,7 @@ export default {
             message: '退出成功!'
           });
           sessionStorage.removeItem('token')
-        this.$router.push('login')
+          this.$router.push('login')
         })
       
     }

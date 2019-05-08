@@ -9,8 +9,8 @@
     <!-- 添加用户 -->
     <el-row>
       <el-col :span="6">
-        <el-input placeholder="请输入内容" v-model="query">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input placeholder="请输入内容" v-model="usersData.query">
+            <el-button slot="append" icon="el-icon-search" @click='getUsersList'></el-button>
         </el-input>
       </el-col>
       <el-col :span="12">
@@ -39,17 +39,24 @@
     </el-row>
     <!-- 表格 -->
     <el-table :data="tableData" border style="width: 100%" class='users-table'>
-      <el-table-column prop="id" label="#" width="60"></el-table-column>
+      <el-table-column
+      type="index"
+      width="50">
+    </el-table-column>
       <el-table-column prop="username" label="姓名" width="240"></el-table-column>
       <el-table-column prop="email" label="邮箱" width="240"></el-table-column>
       <el-table-column prop="mobile" label="电话" width="240"></el-table-column>
       <el-table-column label="用户状态" width="80">
-          <el-switch v-model="value1" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        </template>  
       </el-table-column>
       <el-table-column label="操作">
-          <el-button type="primary" icon="el-icon-edit" plain class="mini"></el-button>
-          <el-button type="danger" icon="el-icon-check" plain class="mini"></el-button>
-          <el-button type="danger" icon="el-icon-delete" plain class="mini"></el-button>
+        <template slot-scope="scope">
+          <el-button type="primary" icon="el-icon-edit" plain class="mini" @click="handleEdit(scope.$index, scope.row)"></el-button>
+          <el-button type="danger" icon="el-icon-check" plain class="mini" @click="handleEdit(scope.$index, scope.row)"></el-button>
+          <el-button type="danger" icon="el-icon-delete" plain class="mini" @click="handleDelete(scope.$index, scope.row)"></el-button>
+        </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
@@ -71,7 +78,21 @@ export default {
   name: "users",
   data() {
       return {
-        dialogVisible:false,
+      usersData:{
+        // 查询数据
+        query:'',
+        // 当前页码
+        pagenum:1,
+        // 页容量
+        pagesize:10,
+      },
+      // 总数
+      total:undefined,
+
+      // 数据
+        tableData: [],
+
+                dialogVisible:false,
         form: {
           username: '',
           password:'',
@@ -97,44 +118,32 @@ export default {
       //   { min: 6, max: 12,  message: '长度在 6 到 12 个字符', }
       // ]
       // },
-
-
-         // 查询数据
-      query:'',
-      // 当前页码
-      pagenum:1,
-      // 页容量
-      pagesize:10,
-      // 总数
-      total:undefined,
-      // 开关
-          value1: true,
-        tableData: []
       }
     },
     methods: {
       // 获取用户列表
-      getUsers(){
+      getUsersList(){
         
-        this.$axios.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`).then(res=>{
+        this.$request.getUsers(this.usersData).then(res=>{
           if(res.data.meta.status==200){
             // console.log(res);
             this.tableData=res.data.data.users
             this.total=res.data.data.total
           }else{
-            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
             this.$router.push('/login');
           }
         })
       },
 
+      // 分页
       handleSizeChange(val) {
         this.pagesize=val
-        this.getUsers()
+        this.getUsersList()
       },
       handleCurrentChange(val) {
          this.pagenum=val
-        this.getUsers()
+        this.getUsersList()
       },
       handleClose() {
         console.log('000');
@@ -154,7 +163,7 @@ export default {
           if(res.data.meta.status==200){
             this.$message.error(res.data.meta.msg)
             this.dialogVisible=true;
-            this.getUsers();
+            this.getUsersList();
             this.form={}
           }else{
             this.$message.error(res.data.meta.msg)
@@ -162,6 +171,16 @@ export default {
           
         })
       },
+
+      // 操作时的回调函数
+      handleEdit(index,row){
+        console.log(index,row);
+        
+      },
+      handleDelete(index,row){
+        console.log(index,row);
+        
+      }
 
       // addUsers(){
           
@@ -184,7 +203,7 @@ export default {
         // }
     },
     created() {
-    this.getUsers()
+    this.getUsersList()
   },
 };
 </script>
