@@ -55,7 +55,10 @@ const request={
     },
     // 编辑用户
     editUser(params){
-        return axios.put(`users/${params}`)
+        return axios.put(`users/${params.id}`,{
+            email:params.email,
+            mobile:params.mobile
+        })
     },
     // 查看用户
     userInfo(id){

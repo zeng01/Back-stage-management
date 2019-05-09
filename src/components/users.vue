@@ -9,13 +9,13 @@
     <!-- 添加用户 -->
     <el-row>
       <el-col :span="6">
-        <el-input placeholder="请输入内容" v-model="usersData.query">
+        <el-input placeholder="请输入内容" v-model="usersData.query" @keyup.enter.native='getUsersList'>
             <el-button slot="append" icon="el-icon-search" @click='getUsersList'></el-button>
         </el-input>
       </el-col>
       <el-col :span="12">
         <el-button type="success" plain @click='addVisible = true'>添加用户</el-button>
-        <el-dialog title="添加用户" :visible.sync="addVisible" width="40%" :before-close="handleClose">
+        <el-dialog title="添加用户" :visible.sync="addVisible" width="40%" >
           <el-form ref="addForm" :model="addForm" :rules='addRules' label-width="80px">
             <el-form-item label="用户名" prop='username'>
               <el-input v-model="addForm.username"></el-input>
@@ -64,34 +64,42 @@
       background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="1"
+      :current-page="usersData.pagenum"
       :page-sizes="[5, 10, 15, 20]"
-      :page-size="10"
+      :page-size="usersData.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total" class='users-page'>
     </el-pagination>
-    <el-dialog title="编辑用户" :visible.sync="editVisible" width="40%" :before-close="handleClose">
-          <el-form :model="editForm" label-width="80px">
+    <el-dialog title="编辑用户" :visible.sync="editVisible" width="40%">
+          <el-form ref='editForm' :model="editForm" label-width="80px">
+            <el-form-item label="用户名">
+              <el-input v-model="editForm.username" disabled></el-input>
+            </el-form-item>
             <el-form-item label="邮箱">
-              <el-input v-model="editForm.edit_email"></el-input>
+              <el-input v-model="editForm.email"></el-input>
             </el-form-item>
             <el-form-item label="电话">
-              <el-input v-model="editForm.edit_mobile"></el-input>
+              <el-input v-model="editForm.mobile"></el-input>
             </el-form-item>
           </el-form>
           <span slot="footer" class="dialog-footer">
             <el-button @click="editVisible = false">取 消</el-button>
-            <el-button type="primary"  @click="editUser()">确 定</el-button>
+            <el-button type="primary"  @click="submitForm('editForm')">确 定</el-button>
           </span>
         </el-dialog>
-        <el-dialog title="收货地址" :visible.sync="dialogTableVisible" width="60%">
-          <el-table :data="gridData" border>
-            <el-table-column property="id" label="#" width="150"></el-table-column>
-            <el-table-column property="roles_id" label="角色ID" width="150"></el-table-column>
-            <el-table-column property="name" label="用户名" width="200"></el-table-column>
-            <el-table-column property="email" label="邮箱" width="150"></el-table-column>
-            <el-table-column property="mobile" label="电话"></el-table-column>
-          </el-table>
+        <el-dialog title="角色权限" :visible.sync="roleVisible" width="40%">
+           <el-form :model="editForm" label-width="80px">
+            <el-form-item label="邮箱">
+              <el-input v-model="editForm.email"></el-input>
+            </el-form-item>
+            <el-form-item label="电话">
+              <el-input v-model="editForm.mobile"></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="roleVisible = false">取 消</el-button>
+            <el-button type="primary"  @click="editUser()">确 定</el-button>
+          </span>
         </el-dialog>
   </div>
 </template>
@@ -137,9 +145,9 @@ export default {
       // 编辑用户
       editVisible:false,
       editForm:{
-        id:'',
-        edit_email:'',
-        edit_mobile:''
+        username:'',
+        email:'',
+        mobile:''
       },
       // 用户信息
       gridData: [{
@@ -149,7 +157,7 @@ export default {
           name: '',
           mobile: ''
         }],
-        dialogTableVisible: false,
+        roleVisible: false,
       }
       
     },
@@ -181,14 +189,16 @@ export default {
       // 关闭遮罩层
       handleClose() {
        this.addVisible=false
-        
+       this.editVisible=false
+       this.roleVisible=false
       },
 
       // 添加用户
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-             this.$request.addUsers(this.addForm).then(res=>{
+            if(formName=='addForm'){
+              this.$request.addUsers(this.addForm).then(res=>{
                 if(res.data.meta.status==201){
                   this.addVisible=false;
                   this.getUsersList();
@@ -197,6 +207,18 @@ export default {
                   this.addForm.mobile=''
                 }
               })
+            }else if((formName=='editForm')){
+              this.$request.editUser(this.editForm).then(res=>{
+                
+                console.log(res);
+                  if(res.data.meta.status==200){
+                  this.editVisible=false
+                  this.getUsersList();
+                  
+                }
+              })
+            }
+             
           } else {
             this.$message.error("数据格式不对!!!")
             return false;
@@ -212,10 +234,12 @@ export default {
 
       //  编辑用户
       handleEdit(index,row){
-        this.editForm.id=row.id
-        this.editForm.edit_email=row.email
-        this.editForm.edit_mobile=row.mobile
         this.editVisible=true
+        this.$request.userInfo(row.id).then(res=>{
+          if(res.data.meta.status==200){
+            this.editForm=res.data.data
+          }
+        })
       },
       editUser(){
           console.log(this.editForm);
@@ -230,25 +254,38 @@ export default {
 
       // 删除用户
       handleDelete(index,row){
-        console.log(index,row);
-        this.$request.deleteUsers(row.id).then(res=>{
-          if(res.data.meta.status==200){
-                  this.getUsersList();
-            }
-        })
+        this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$request.deleteUsers(row.id).then(res=>{
+            if(res.data.meta.status==200){
+                    this.getUsersList();
+                     
+              }
+          })
+         
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+        
       },
       // 用户信息
       handleInfo(index,row){
-        this.dialogTableVisible=true
+        
+        this.roleVisible=true
         this.$request.userInfo(row.id).then(res=>{
-            this.editVisible=false
-            console.log(res);
-            this.getData[0]=res.data.data
-            this.getData.id=res.data.data.id
-            this.getData.roles_id=res.data.data.rid
-            this.getData.email=res.data.data
-            this.getData.name=res.data.data.username
-            this.getData.mobile=res.data.data.mobile
+            this.roleVisible=false
+            this.gridData.id=res.data.data.id
+            this.gridData.roles_id=res.data.data.rid
+            this.gridData.email=res.data.data
+            this.gridData.name=res.data.data.username
+            this.gridData.mobile=res.data.data.mobile
+            console.log(this.gridData);
           })
       }
       
