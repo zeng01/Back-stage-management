@@ -89,8 +89,8 @@
         </el-dialog>
         <el-dialog title="用户角色权限" :visible.sync="roleVisible" width="40%">
            <el-form ref='roleForm'  :model="roleForm" :rules="addRules" label-width="80px">
-            <el-form-item label="用户名" disabled>
-              <el-input v-model="roleForm.username"></el-input>
+            <el-form-item label="用户名" prop='username'>
+              <el-input v-model="roleForm.username" disabled></el-input>
             </el-form-item>
             <el-form-item label="角色">
               <el-select v-model="roleValue" placeholder="请选择">
@@ -143,11 +143,11 @@ export default {
       addRules: {
         username: [
           { required: true, message: '用户名不能为空',trigger: 'blur' },
-          { min: 5, max: 12,  message: '长度在 6 到 12 个字符', }
+          { min: 5, max: 12,  message: '长度在 6 到 12 个字符', trigger: "change"}
         ],
         password: [
           { required: true, message: '密码不能为空', trigger: 'blur'},
-          { min: 6, max: 12,  message: '长度在 6 到 12 个字符', }
+          { min: 6, max: 12,  message: '长度在 6 到 12 个字符', trigger: "change"}
         ]
       },
       // 编辑用户

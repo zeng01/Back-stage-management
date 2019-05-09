@@ -77,7 +77,28 @@ const request={
         return axios.put(`users/${params.id}/role`,{
             rid:params.rid,
         })
-    }
+    },
+    // 添加角色
+    addRoles(params){
+        return axios.post('roles',params)
+    },
+    // 根据id查看角色
+    getRolesById(id){
+        return axios.get(`roles/${id}`)
+    },
+
+    // 编辑角色
+    updateRoles(params){
+        return axios.put(`roles/${params.roleId}`,{
+            roleName:params.roleName,
+            roleDesc:params.roleDesc
+        })
+    },
+
+    // 删除角色
+    deleteRoles(id){
+        return axios.delete(`roles/${id}`)
+    },
 }
 
 // 暴露 install方法
