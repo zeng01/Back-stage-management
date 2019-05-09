@@ -71,7 +71,7 @@
       :total="total" class='users-page'>
     </el-pagination>
     <el-dialog title="编辑用户" :visible.sync="editVisible" width="40%">
-          <el-form ref='editForm' :model="editForm" label-width="80px">
+          <el-form ref='editForm' :model="editForm" :rules="addRules" label-width="80px">
             <el-form-item label="用户名">
               <el-input v-model="editForm.username" disabled></el-input>
             </el-form-item>
@@ -88,12 +88,13 @@
           </span>
         </el-dialog>
         <el-dialog title="用户角色权限" :visible.sync="roleVisible" width="40%">
-           <el-form ref='roleForm'  :model="roleForm" label-width="80px">
-            <el-form-item label="用户名">
+           <el-form ref='roleForm'  :model="roleForm" :rules="addRules" label-width="80px">
+            <el-form-item label="用户名" disabled>
               <el-input v-model="roleForm.username"></el-input>
             </el-form-item>
             <el-form-item label="角色">
               <el-select v-model="roleValue" placeholder="请选择">
+                <el-option label='未分配角色' :value='-1'></el-option>
                 <el-option
                   v-for="item in roles"
                   :key="item.value"
@@ -158,9 +159,7 @@ export default {
       },
       // 用户角色权限
       roleVisible: false,
-      roleForm: [{
-          username: '',
-        }],
+      roleForm:{},
         
       roleValue:"",
       // 角色数据
@@ -214,15 +213,16 @@ export default {
                     this.getUsersList();
                   }
               })
+              // 修改用户权限
             }else{
-              this.$request.updateRoles(this.roleForm).then(res=>{
-                console.log(this.roleForm);
-                
-                
+              
+              this.$request.updateRoles({
+                id:this.roleForm.id,
+                rid:this.roleValue
+                }).then(res=>{
                 if(res.data.meta.status==200){
                     this.roleVisible=false
                     this.getUsersList();
-                    console.log(res);
                   }
               })
             }
@@ -272,20 +272,17 @@ export default {
         });
         
       },
-      // 修改用户权限
+      // 弹出角色框
       handleInfo(index,row){
-        
-        this.roleVisible=true
         this.$request.userInfo(row.id).then(res=>{
+          
             this.roleForm=res.data.data
-            console.log(this.roleForm);
             this.$request.getRoles().then(res=>{
               if(res.data.meta.status==200){
-                    // this.getUsersList();
                 this.roles=res.data.data
                 this.roleValue=this.roleForm.rid
+                 this.roleVisible=true
               }
-              // 
             })
           })
       }
