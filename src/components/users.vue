@@ -209,13 +209,21 @@ export default {
               // 编辑用户
             }else if((formName=='editForm')){
               this.$request.editUser(this.editForm).then(res=>{
-                
-                console.log(res);
                   if(res.data.meta.status==200){
-                  this.editVisible=false
-                  this.getUsersList();
-                  
-                }
+                    this.editVisible=false
+                    this.getUsersList();
+                  }
+              })
+            }else{
+              this.$request.updateRoles(this.roleForm).then(res=>{
+                console.log(this.roleForm);
+                
+                
+                if(res.data.meta.status==200){
+                    this.roleVisible=false
+                    this.getUsersList();
+                    console.log(res);
+                  }
               })
             }
              
@@ -241,16 +249,6 @@ export default {
           }
         })
       },
-      editUser(){
-          console.log(this.editForm);
-          this.$request.editUser(this.editForm.id).then(res=>{
-            this.editVisible=false
-            console.log(res);
-            
-          })
-          
-        },
-
 
       // 删除用户
       handleDelete(index,row){
@@ -279,17 +277,15 @@ export default {
         
         this.roleVisible=true
         this.$request.userInfo(row.id).then(res=>{
-
-            
             this.roleForm=res.data.data
+            console.log(this.roleForm);
             this.$request.getRoles().then(res=>{
-              console.log(res);
               if(res.data.meta.status==200){
                     // this.getUsersList();
                 this.roles=res.data.data
-                this.roleValue=this.roleForm.id
+                this.roleValue=this.roleForm.rid
               }
-              // this.roleVisible=false
+              // 
             })
           })
       }

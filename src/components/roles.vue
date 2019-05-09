@@ -14,8 +14,8 @@
     </el-row>
     <!-- 表格 -->
     <el-table :data="tableData" border style="width: 100%" class='users-table'>
-        <el-table-column label="" width="30">&lt;</el-table-column>
-        <el-table-column type="index" width="50"></el-table-column> 
+        <el-table-column label="" width="30">&gt;</el-table-column>
+        <el-table-column type="index" width="30"></el-table-column> 
       <el-table-column prop="roleName" label="角色名称" width="300"></el-table-column>
       <el-table-column prop="roleDesc" label="角色描述" width="300"></el-table-column>
       <el-table-column label="操作">
@@ -64,7 +64,6 @@ export default {
     },
     created() {
       this.$request.getRoles().then(res=>{
-        console.log(res.data.data);
         if(res.data.meta.status==200){
           
           // children字段会被element-ui认做树形结构渲染，会报错
