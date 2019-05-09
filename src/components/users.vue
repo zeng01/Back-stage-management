@@ -87,18 +87,25 @@
             <el-button type="primary"  @click="submitForm('editForm')">确 定</el-button>
           </span>
         </el-dialog>
-        <el-dialog title="角色权限" :visible.sync="roleVisible" width="40%">
-           <el-form :model="editForm" label-width="80px">
-            <el-form-item label="邮箱">
-              <el-input v-model="editForm.email"></el-input>
+        <el-dialog title="用户角色权限" :visible.sync="roleVisible" width="40%">
+           <el-form ref='roleForm'  :model="roleForm" label-width="80px">
+            <el-form-item label="用户名">
+              <el-input v-model="roleForm.username"></el-input>
             </el-form-item>
-            <el-form-item label="电话">
-              <el-input v-model="editForm.mobile"></el-input>
+            <el-form-item label="角色">
+              <el-select v-model="roleValue" placeholder="请选择">
+                <el-option
+                  v-for="item in roles"
+                  :key="item.value"
+                  :label="item.roleName"
+                  :value="item.id">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-form>
           <span slot="footer" class="dialog-footer">
             <el-button @click="roleVisible = false">取 消</el-button>
-            <el-button type="primary"  @click="editUser()">确 定</el-button>
+            <el-button type="primary"  @click="submitForm('roleForm')">确 定</el-button>
           </span>
         </el-dialog>
   </div>
@@ -149,15 +156,15 @@ export default {
         email:'',
         mobile:''
       },
-      // 用户信息
-      gridData: [{
-          id:'',
-          roles_id:'',
-          email: '',
-          name: '',
-          mobile: ''
+      // 用户角色权限
+      roleVisible: false,
+      roleForm: [{
+          username: '',
         }],
-        roleVisible: false,
+        
+      roleValue:"",
+      // 角色数据
+      roles:[]
       }
       
     },
@@ -170,9 +177,6 @@ export default {
             // console.log(res);
             this.tableData=res.data.data.users
             this.total=res.data.data.total
-          }else{
-            sessionStorage.removeItem('token');
-            this.$router.push('/login');
           }
         })
       },
@@ -186,17 +190,12 @@ export default {
          this.usersData.pagenum=val
         this.getUsersList()
       },
-      // 关闭遮罩层
-      handleClose() {
-       this.addVisible=false
-       this.editVisible=false
-       this.roleVisible=false
-      },
 
       // 添加用户
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            // 添加用户
             if(formName=='addForm'){
               this.$request.addUsers(this.addForm).then(res=>{
                 if(res.data.meta.status==201){
@@ -207,6 +206,7 @@ export default {
                   this.addForm.mobile=''
                 }
               })
+              // 编辑用户
             }else if((formName=='editForm')){
               this.$request.editUser(this.editForm).then(res=>{
                 
@@ -274,18 +274,23 @@ export default {
         });
         
       },
-      // 用户信息
+      // 修改用户权限
       handleInfo(index,row){
         
         this.roleVisible=true
         this.$request.userInfo(row.id).then(res=>{
-            this.roleVisible=false
-            this.gridData.id=res.data.data.id
-            this.gridData.roles_id=res.data.data.rid
-            this.gridData.email=res.data.data
-            this.gridData.name=res.data.data.username
-            this.gridData.mobile=res.data.data.mobile
-            console.log(this.gridData);
+
+            
+            this.roleForm=res.data.data
+            this.$request.getRoles().then(res=>{
+              console.log(res);
+              if(res.data.meta.status==200){
+                    // this.getUsersList();
+                this.roles=res.data.data
+                this.roleValue=this.roleForm.id
+              }
+              // this.roleVisible=false
+            })
           })
       }
       

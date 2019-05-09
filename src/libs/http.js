@@ -1,6 +1,7 @@
 // 导入vue
 import Vue from 'vue'
-
+// 导入router
+import router from '../router'
 // 抽取axios插件
 import axios from 'axios'
 axios.defaults.baseURL='http://localhost:8888/api/private/v1/'
@@ -22,6 +23,8 @@ axios.interceptors.response.use(function (response) {
         Vue.prototype.$message.success(response.data.meta.msg);
     }else{
         new Vue().$message.error(response.data.meta.msg);
+        sessionStorage.removeItem('token');
+        router.push('/login');
     }
     return response;
   }, function (error) {
@@ -63,6 +66,17 @@ const request={
     // 查看用户
     userInfo(id){
         return axios.get(`users/${id}`)
+    },
+    //查看用户角色
+    getRoles(){
+        return axios.get('roles')
+    },
+
+    // 分配角色
+    updateRoles(params){
+        return axios.put(`users/${params.id}/role`,{
+            rid:params.rid,
+        })
     }
 }
 

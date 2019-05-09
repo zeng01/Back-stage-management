@@ -15,13 +15,13 @@
     <!-- 表格 -->
     <el-table :data="tableData" border style="width: 100%" class='users-table'>
         <el-table-column label="" width="30">&lt;</el-table-column>
-        <el-table-column prop="id" label="#" width="30"></el-table-column>
+        <el-table-column type="index" width="50"></el-table-column> 
       <el-table-column prop="roleName" label="角色名称" width="300"></el-table-column>
       <el-table-column prop="roleDesc" label="角色描述" width="300"></el-table-column>
       <el-table-column label="操作">
-          <el-button type="primary" icon="el-icon-edit" plain class="mini"></el-button>
-          <el-button type="danger" icon="el-icon-check" plain class="mini"></el-button>
-          <el-button type="danger" icon="el-icon-delete" plain class="mini"></el-button>
+          <el-button type="primary" icon="el-icon-edit" plain class="mini" @click="handleEdit(scope.$index, scope.row)"></el-button>
+          <el-button type="danger" icon="el-icon-check" plain class="mini" @click="handleRole(scope.$index, scope.row)"></el-button>
+          <el-button type="danger" icon="el-icon-delete" plain class="mini" @click="handleDelete(scope.$index, scope.row)"></el-button>
       </el-table-column>
     </el-table>
   </div>
@@ -36,6 +36,12 @@ export default {
       }
     },
     methods: {
+
+        handleEdit(index,row){},
+        handleRole(index,row){},
+        handleDelete(index,row){},
+
+
         //   添加角色
         addRoles(){
             this.$prompt('角色名称','添加角色', {
@@ -57,10 +63,21 @@ export default {
         }
     },
     created() {
-      this.$axios.get('roles').then(res=>{
+      this.$request.getRoles().then(res=>{
         console.log(res.data.data);
         if(res.data.meta.status==200){
-          // this.tableData=res.data.data
+          
+          // children字段会被element-ui认做树形结构渲染，会报错
+          // 解决方案，用其他字段替代children
+          let data=res.data.data
+          // for循环
+          data.forEach(v => {
+            v._children=v.children
+
+            // 删除v.children属性
+            delete v.children
+          });
+          this.tableData=data
         }
         
       })
