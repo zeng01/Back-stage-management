@@ -7,11 +7,11 @@
       <el-breadcrumb-item>权限列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 表格 -->
-    <el-table :data="tableData" border style="width: 100%" class='users-table'>
-      <el-table-column prop="id" label="#" width="30"></el-table-column>
+    <el-table :data="tableData" border style="width: 100%" class='users-table' v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.1)">
+      <el-table-column type='index' width="50"></el-table-column>
       <el-table-column prop="authName" label="权限名称" width="180"></el-table-column>
       <el-table-column prop="path" label="路径" width="180"></el-table-column>
-      <el-table-column prop="level" label="层级"></el-table-column>
+      <el-table-column prop="level" label="层级" width="180"></el-table-column>
     </el-table>
   </div>
 </template>
@@ -21,22 +21,30 @@ export default {
   name: "users",
   data() {
       return {
-        tableData: []
+        tableData: [],
+        loading:true
       }
     },
-    methods: {
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      }
-    },
+
     created() {
-      this.$axios.get('rights/:type=list').then(res=>{
-        console.log(res);
+      this.loading=true
+      this.$request.getRights().then(res=>{
+        setTimeout(()=>{
+            this.loading=false
+        },1000)
         
         this.tableData=res.data.data
+        // 遍历
+        this.tableData.forEach(v=>{
+          if(v.level=="0"){
+            v.level='一级'
+          }else if(v.level=="1"){
+            v.level='二级'
+          }else{
+            v.level='三级'
+          }
+        })
+        
       })
     },
 };

@@ -8,16 +8,25 @@
     </el-breadcrumb>
     <!-- 表格 -->
     <el-table :data="tableData" border style="width: 100%" class='users-table'>
-      <el-table-column prop="id" label="#" width="30"></el-table-column>
-      <el-table-column prop="orderId" label="订单编号" width="300"></el-table-column>
-      <el-table-column prop="price" label="订单价格" width="90"></el-table-column>
+      <el-table-column type="index" label="#" width="50"></el-table-column>
+      <el-table-column prop="order_number" label="订单编号" width="300"></el-table-column>
+      <el-table-column prop="order_price" label="订单价格" width="90"></el-table-column>
       <el-table-column label="是否付款" width="120">
-          <el-button type="danger" plain class="mini">未付款</el-button>
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.pay_status==0" type="danger" plain class="mini">未付款</el-button>
+          <el-button v-else type="success" plain class="mini">已付款</el-button>
+        </template>
       </el-table-column>
-      <el-table-column prop='isSend' label="是否发货" width="120"></el-table-column>
-      <el-table-column prop="date" label="下单时间" width="180"></el-table-column>
+      <el-table-column prop='is_send' label="是否发货" width="120"></el-table-column>
+      <el-table-column prop="create_time" label="下单时间" width="180">
+        <template slot-scope="scope">
+          {{scope.row.create_time | formatTime }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
-          <el-button type="primary" icon="el-icon-edit" plain class="mini"></el-button>
+          <template slot-scope="scope">
+            <el-button type="primary" icon="el-icon-edit" plain class="mini" @click="handleEdit(scope.$index, scope.row)"></el-button>
+          </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
@@ -31,50 +40,92 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="20" class='users-page'>
     </el-pagination>
+    <el-dialog title="修改订单地址" :visible.sync="editVisible" width="40%">
+          <el-form ref='editForm' :model="editForm" label-width="80px">
+            <el-form-item label="省市区/县">
+              <el-cascader
+                expand-trigger="hover"
+                :options="options"
+                v-model="selectedOptions"
+                @change="handleChange">
+              </el-cascader>
+
+            </el-form-item>
+            <el-form-item label="详细地址">
+              <el-input v-model="editForm.address"></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="editVisible = false">取 消</el-button>
+            <el-button type="primary"  @click="submitForm('editForm')">确 定</el-button>
+          </span>
+    </el-dialog>
   </div>
   
 </template>
 
 <script>
+
+import moment from 'moment'
+import options from '../libs/city_data2017_element.js'
+
 export default {
   name: "goods",
   data() {
       return {
-        tableData: [{
-            id:'1',
-            orderId: '王小虎',
-            price:'188',
-            isSend:'否',
-            date: '2016-05-02',
-        }, {
-            id:'1',
-            orderId: '王小虎',
-            price:'188',
-            isSend:'否',
-            date: '2016-05-04',
-        }, {
-            id:'1',
-            orderId: '王小虎',
-            price:'188',
-            isSend:'否',
-            date: '2016-05-01',
-        }, {
-            id:'1',
-            orderId: '王小虎',
-            price:'188',
-            isSend:'否',
-            date: '2016-05-03',
-        }]
+        orderForm:{
+          query:'',
+          pagenum:1,
+          pagesize:10,
+        },
+        
+        tableData: [],
+
+        // 修改地址
+        editVisible:false,
+        editForm:{
+            address:''
+        },
+
+        // 省市数据
+        options,
+        // 选中的数据
+        selectedOptions:[]
       }
     },
     methods: {
+       
+      // 级联选择器 
+      handleChange(value){
+        console.log(value);
+        
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+      },
+
+      handleEdit(index,row){
+        this.editVisible=true
+      },
+      getOrder(){
+        this.$request.getOrder(this.orderForm).then(res=>{
+          if(res.data.meta.status==200){
+            this.tableData=res.data.data.goods
+          }
+        })
       }
     },
+    created() {
+      this.getOrder()
+    },
+    filters:{
+      formatTime(val){
+        return moment(val).format('YYYY-MM-DD HH:mm:ss');
+      }
+    }
 };
 </script>
 

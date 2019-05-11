@@ -43,6 +43,8 @@ const routes=[
 
 // 创建 router 实例，
 const router = new VueRouter({
+    // 路由美化去掉#
+    mode: 'history',
     routes 
   })
 

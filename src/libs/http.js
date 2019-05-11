@@ -99,6 +99,19 @@ const request={
     deleteRoles(id){
         return axios.delete(`roles/${id}`)
     },
+
+    // 获取权限列表
+    getRights(){
+        return axios.get('rights/list')
+    },
+    // 获取数据报表
+    getReport(){
+        return axios.get('reports/type/1')
+    },
+    // 订单列表
+    getOrder(params){
+        return axios.get('orders',{params})
+    }
 }
 
 // 暴露 install方法

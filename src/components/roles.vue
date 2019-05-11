@@ -14,14 +14,36 @@
     </el-row>
     <!-- 表格 -->
     <el-table :data="tableData" border style="width: 100%" class='users-table'>
-        <el-table-column label="" width="30">&gt;</el-table-column>
+        <el-table-column label="" width="30" type="expand">
+          <template slot-scope="scope">
+            <el-row v-for="(level, index) in scope.row._children" :key="index">
+             <el-col :span="6">
+               <el-tag :key="level.id" closable> {{level.authName}}</el-tag>
+               <span class='el-icon-arrow-right'></span>
+             </el-col>
+             <el-col :span="18">
+               <!-- 二级标签 -->
+               <el-row v-for="(level2, i) in level.children" :key="i" type='success'>
+                  <el-col :span="6">
+                    <el-tag :key="level2.id" closable> {{level2.authName}}</el-tag>
+                    <span class='el-icon-arrow-right'></span>
+                  </el-col>
+                  <el-col :span="18">
+                    <!-- 三级标签 -->
+                    <el-tag v-for="(level3, j) in level2.children" :key="j" closable type='warning' class='my-tag'> {{level3.authName}}</el-tag>
+                  </el-col>
+                </el-row>
+             </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
         <el-table-column type="index" width="40"></el-table-column> 
       <el-table-column prop="roleName" label="角色名称" width="300"></el-table-column>
       <el-table-column prop="roleDesc" label="角色描述" width="300"></el-table-column>
       <el-table-column label="操作">
           <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-edit" plain class="mini" @click="handleEdit(scope.$index, scope.row)"></el-button>
-          <el-button type="danger" icon="el-icon-check" plain class="mini" @click="handleRole(scope.$index, scope.row)"></el-button>
+          <el-button type="success" icon="el-icon-check" plain class="mini" @click="handleRole(scope.$index, scope.row)"></el-button>
           <el-button type="danger" icon="el-icon-delete" plain class="mini" @click="handleDelete(scope.$index, scope.row)"></el-button>
         </template>
       </el-table-column>
@@ -56,6 +78,23 @@
             <el-button type="primary"  @click="submitForm('editForm')">确 定</el-button>
           </span>
     </el-dialog>
+    <!-- 查看角色 -->
+    <el-dialog title="编辑角色" :visible.sync="infoVisible" width="40%" >
+          <el-form ref="infoRoles" :model="infoRoles" :rules='roleRules' label-width="80px">
+            <el-form-item label="角色名称" prop='roleName'>
+              {{infoRoles.roleName}}
+              <el-input v-model="infoRoles.roleName"></el-input>
+            </el-form-item>
+            <el-form-item label="角色描述" prop='roleDesc'>
+              {{infoRoles.roleDesc}}
+              <el-input v-model="infoRoles.roleDesc"></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="infoVisible = false">取 消</el-button>
+            <el-button type="primary"  @click="submitForm('infoRoles')">确 定</el-button>
+          </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -83,6 +122,12 @@ export default {
         // 编辑角色
         editVisible:false,
         editForm:{
+          roleName:'',
+          roleDesc:''
+        },
+        // 查看角色
+        infoVisible:false,
+        infoRoles:{
           roleName:'',
           roleDesc:''
         }
@@ -184,5 +229,9 @@ export default {
 .users-page{
     background: #fff;
     padding: 20px;
+}
+.my-tag{
+  margin-right:10px;
+  margin-bottom: 10px;
 }
 </style>
