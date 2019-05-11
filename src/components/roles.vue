@@ -16,21 +16,23 @@
     <el-table :data="tableData" border style="width: 100%" class='users-table'>
         <el-table-column label="" width="30" type="expand">
           <template slot-scope="scope">
+            <div v-if='scope.row._children.length==0' class='noRight'>未分配权限</div>
+            <!-- 一级标签 -->
             <el-row v-for="(level, index) in scope.row._children" :key="index">
              <el-col :span="6">
-               <el-tag :key="level.id" closable> {{level.authName}}</el-tag>
+               <el-tag :key="level.id" closable @close='deleteRight(scope.row,level.id)'> {{level.authName}}</el-tag>
                <span class='el-icon-arrow-right'></span>
              </el-col>
              <el-col :span="18">
                <!-- 二级标签 -->
-               <el-row v-for="(level2, i) in level.children" :key="i" type='success'>
+               <el-row v-for="(level2, i) in level.children" :key="i" type='success' @close='deleteRight(scope.row,level2.id)'>
                   <el-col :span="6">
                     <el-tag :key="level2.id" closable> {{level2.authName}}</el-tag>
                     <span class='el-icon-arrow-right'></span>
                   </el-col>
                   <el-col :span="18">
                     <!-- 三级标签 -->
-                    <el-tag v-for="(level3, j) in level2.children" :key="j" closable type='warning' class='my-tag'> {{level3.authName}}</el-tag>
+                    <el-tag v-for="(level3, j) in level2.children" :key="j" closable type='warning' class='my-tag' @close='deleteRight(scope.row,level3.id)'> {{level3.authName}}</el-tag>
                   </el-col>
                 </el-row>
              </el-col>
@@ -78,21 +80,17 @@
             <el-button type="primary"  @click="submitForm('editForm')">确 定</el-button>
           </span>
     </el-dialog>
-    <!-- 查看角色 -->
-    <el-dialog title="编辑角色" :visible.sync="infoVisible" width="40%" >
-          <el-form ref="infoRoles" :model="infoRoles" :rules='roleRules' label-width="80px">
-            <el-form-item label="角色名称" prop='roleName'>
-              {{infoRoles.roleName}}
-              <el-input v-model="infoRoles.roleName"></el-input>
-            </el-form-item>
-            <el-form-item label="角色描述" prop='roleDesc'>
-              {{infoRoles.roleDesc}}
-              <el-input v-model="infoRoles.roleDesc"></el-input>
-            </el-form-item>
-          </el-form>
+    <!-- 修改角色权限 -->
+    <el-dialog title="修改角色权限" :visible.sync="rightsVisible" width="40%" >
+          
+            <el-tree :data="rightsData" :props="rightsProps" show-checkbox node-key="id"
+            :default-checked-keys="defaultCheckedKeys"
+            default-expand-all
+            ref="tree"
+            ></el-tree>
           <span slot="footer" class="dialog-footer">
-            <el-button @click="infoVisible = false">取 消</el-button>
-            <el-button type="primary"  @click="submitForm('infoRoles')">确 定</el-button>
+            <el-button @click="rightsVisible = false">取 消</el-button>
+            <el-button type="primary"  @click="setRights">确 定</el-button>
           </span>
     </el-dialog>
   </div>
@@ -125,12 +123,17 @@ export default {
           roleName:'',
           roleDesc:''
         },
-        // 查看角色
-        infoVisible:false,
-        infoRoles:{
-          roleName:'',
-          roleDesc:''
-        }
+        // 修改角色权限
+        rightsVisible:false,
+        rightsForm:{},
+        // 所有权限列表
+        rightsData:[],
+        rightsProps:{
+          children: 'children',
+          label:'authName'
+        },
+        // 默认的选中权限
+      defaultCheckedKeys: []
       }
     },
     methods: {
@@ -139,7 +142,6 @@ export default {
       getRoles(){
         this.$request.getRoles().then(res=>{
         if(res.data.meta.status==200){
-          
           // children字段会被element-ui认做树形结构渲染，会报错
           // 解决方案，用其他字段替代children
           let data=res.data.data
@@ -165,7 +167,61 @@ export default {
             }
           })
         },
-        handleRole(index,row){},
+
+        // 修改角色权限
+        handleRole(index,row){
+          this.rightsVisible=true,
+          this.rightsForm=row
+          this.$request.getRightsTree().then(res=>{
+            this.rightsData=res.data.data
+            // 设置选中的值
+            let checkedIds = [];
+            // // 一级
+            // row._children.forEach(v1 => {
+            //   checkedIds.push(v1.id);
+            //   // 二级
+            //   v1.children.forEach(v2 => {
+            //     checkedIds.push(v2.id);
+            //     // 三级
+            //     v2.children.forEach(v3 => {
+            //       checkedIds.push(v3.id);
+            //     });
+            //   });
+            // });
+
+          // 使用递归来赋值
+            function getCheckedKeys(item) {
+            // 查找后代的children 如果有 就遍历 并且 添加到数组中
+            item._children.forEach(v => {
+              checkedIds.push(v.id);
+              // 如果有后代就去找后代
+              if (v.children) {
+                // 为了保证代码的一致 重新赋值 _children属性
+                v._children = v.children;
+                getCheckedKeys(v);
+                }
+              });
+            }
+            getCheckedKeys(row);
+            this.defaultCheckedKeys=checkedIds
+          })
+        },
+        // 角色授权
+        setRights(){
+            // console.log(this.$refs.tree.getCheckedKeys());
+            // 选中的id ,使用，拼接起来
+            const rids=this.$refs.tree.getCheckedKeys().join(',')
+
+            this.$request.setRight({
+              roleId:this.rightsForm.id,
+              rids
+            }).then(res=>{
+                if(res.data.meta.status==200){
+                  this.getRoles()
+                  this.rightsVisible=false
+              }
+            })
+        },
 
         // 删除角色
         handleDelete(index,row){
@@ -209,6 +265,17 @@ export default {
                 }
               })
             }
+        },
+
+        // 删除指定权限
+        deleteRight(row,rightId){
+            this.$request.delRight({
+              roleId:row.id,
+              rightId
+            }).then(res=>{
+              // 重新赋值
+              row._children=res.data.data
+            })
         }
     },
     created() {
@@ -233,5 +300,8 @@ export default {
 .my-tag{
   margin-right:10px;
   margin-bottom: 10px;
+}
+.noRight{
+  text-align: center;
 }
 </style>

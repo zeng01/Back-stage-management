@@ -34,11 +34,11 @@
       background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="1"
+      :current-page="orderForm.pagenum"
       :page-sizes="[5, 10, 15, 20]"
-      :page-size="5"
+      :page-size="orderForm.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="20" class='users-page'>
+      :total="total" class='users-page'>
     </el-pagination>
     <el-dialog title="修改订单地址" :visible.sync="editVisible" width="40%">
           <el-form ref='editForm' :model="editForm" label-width="80px">
@@ -46,8 +46,7 @@
               <el-cascader
                 expand-trigger="hover"
                 :options="options"
-                v-model="selectedOptions"
-                @change="handleChange">
+                v-model="selectedOptions">
               </el-cascader>
 
             </el-form-item>
@@ -57,7 +56,7 @@
           </el-form>
           <span slot="footer" class="dialog-footer">
             <el-button @click="editVisible = false">取 消</el-button>
-            <el-button type="primary"  @click="submitForm('editForm')">确 定</el-button>
+            <el-button type="primary"  @click="submitForm()">确 定</el-button>
           </span>
     </el-dialog>
   </div>
@@ -78,6 +77,8 @@ export default {
           pagenum:1,
           pagesize:10,
         },
+        // 总页数
+        total:undefined,
         
         tableData: [],
 
@@ -96,15 +97,17 @@ export default {
     methods: {
        
       // 级联选择器 
-      handleChange(value){
-        console.log(value);
+      submitForm(){
+        console.log(this.selectedOptions);
         
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+        this.orderForm.pagesize=val
+        this.getOrder()
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+        this.orderForm.pagenum=val
+        this.getOrder()
       },
 
       handleEdit(index,row){
@@ -114,6 +117,7 @@ export default {
         this.$request.getOrder(this.orderForm).then(res=>{
           if(res.data.meta.status==200){
             this.tableData=res.data.data.goods
+            this.total=res.data.data.total
           }
         })
       }

@@ -100,9 +100,13 @@ const request={
         return axios.delete(`roles/${id}`)
     },
 
-    // 获取权限列表
+    // 获取权限列表list
     getRights(){
-        return axios.get('rights/list')
+        return axios.get(`rights/list`)
+    },
+    // 获取权限列表tree
+    getRightsTree(){
+        return axios.get(`rights/tree`)
     },
     // 获取数据报表
     getReport(){
@@ -111,6 +115,16 @@ const request={
     // 订单列表
     getOrder(params){
         return axios.get('orders',{params})
+    },
+    // 删除指定权限
+    delRight(params){
+        return axios.delete(`roles/${params.roleId}/rights/${params.rightId}`)
+    },
+    // 角色授权
+    setRight(params){
+        return axios.post(`roles/${params.roleId}/rights`,{
+            rids:params.rids
+        })
     }
 }
 
