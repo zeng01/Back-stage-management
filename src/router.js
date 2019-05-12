@@ -17,6 +17,9 @@ import categories from './components/categories.vue'
 import order from './components/order.vue'
 import report from './components/report.vue'
 import error from './components/error.vue'
+import goodsList from './components/goodsList.vue'
+import addGoods from './components/addGoods.vue'
+
 
 // 写规则
 const routes=[
@@ -29,14 +32,19 @@ const routes=[
             {path:'users',component:users},
             {path:'roles',component:roles},
             {path:'rights',component:rights},
-            {path:'goods',component:goods},
+            {path:'goods',component:goods,
+            children:[
+              {path:'',component:goodsList},
+              {path:'addGoods',component:addGoods},
+            ]
+          },
             {path:'params',component:params},
             {path:'categories',component:categories},
-            {path:'order',component:order},
+            {path:'orders',component:order},
             {path:'report',component:report},
         ]
     },
-    {path:'/error',component:error},
+    {path:'error',component:error},
 ]
 
 
@@ -51,7 +59,7 @@ const router = new VueRouter({
   // 导航守卫
   router.beforeEach((to, from, next) => {
     // 判断不存在的页面，强制进入error页面
-    if(to.matched.length===0){
+    if(to.matched.length==0){
       next('/error')
     }else{
       next()

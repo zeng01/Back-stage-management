@@ -193,12 +193,15 @@ export default {
             function getCheckedKeys(item) {
             // 查找后代的children 如果有 就遍历 并且 添加到数组中
             item._children.forEach(v => {
-              checkedIds.push(v.id);
+              
               // 如果有后代就去找后代
               if (v.children) {
                 // 为了保证代码的一致 重新赋值 _children属性
                 v._children = v.children;
                 getCheckedKeys(v);
+                }else{
+                  // 没有children后代了就push
+                  checkedIds.push(v.id);
                 }
               });
             }
@@ -209,8 +212,14 @@ export default {
         // 角色授权
         setRights(){
             // console.log(this.$refs.tree.getCheckedKeys());
-            // 选中的id ,使用，拼接起来
-            const rids=this.$refs.tree.getCheckedKeys().join(',')
+            // 被选中的id 
+            let checked=this.$refs.tree.getCheckedKeys()
+            // 如果子节点只选一个，主节点也不选中,所以使用半选中方法,
+            const halfChecked=this.$refs.tree.getHalfCheckedKeys()
+            // 把主节点加上
+            checked=checked.concat(halfChecked)
+            // 使用，拼接起来
+            const rids=checked.join(',')
 
             this.$request.setRight({
               roleId:this.rightsForm.id,
@@ -220,6 +229,10 @@ export default {
                   this.getRoles()
                   this.rightsVisible=false
               }
+              // 角色重新授权后，左侧菜单重新渲染
+              this.$request.getMenus().then(res=>{
+                this.$store.commit('getMenuList',res.data.data)
+              })
             })
         },
 

@@ -69,7 +69,7 @@ import moment from 'moment'
 import options from '../libs/city_data2017_element.js'
 
 export default {
-  name: "goods",
+  name: "order",
   data() {
       return {
         orderForm:{

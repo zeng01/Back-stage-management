@@ -16,12 +16,13 @@
         <!-- 写上router 会解析成路径 -->
         <el-menu router default-active="2" class="el-menu-vertical-demo">
           <!-- index的值要是字符串，所以拼接一个‘’转成字符串 -->
-          <el-submenu v-for="(item, index) in this.$store.state.menuList" :key="index" :index="index+''">
+          <el-submenu v-for="(item, index) in $store.state.menuList" :key="index" :index="item.order+''">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>{{item.authName}}</span>
             </template>
-              <el-menu-item v-for="(it, i) in item.children" :key="i" :index="it.path">
+              <!-- 相对路径改为绝对路径 -->
+              <el-menu-item v-for="(it, i) in item.children" :key="i" :index="'/'+it.path">
                 <i class="el-icon-menu"></i>{{it.authName}}
                 </el-menu-item>
           </el-submenu>

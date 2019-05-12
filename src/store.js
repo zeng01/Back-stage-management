@@ -12,9 +12,11 @@ const store = new Vuex.Store({
         menuList: []
     },
     mutations: {
-        getMenuList (state,newMenuList) {
+        getMenuList(state,newMenuList) {
+            // console.log(newMenuList);
+            
             // 生成新的数据赋值给菜单
-          this.menuList=newMenuList
+            state.menuList=newMenuList
         }
     }
 })

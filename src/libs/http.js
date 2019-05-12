@@ -129,6 +129,12 @@ const request={
     // 左侧菜单权限
     getMenus(){
         return axios.get(`menus`)
+    },
+    // 商品列表
+    getGoods(params){
+        return axios.get(`goods`,{
+            params
+        })
     }
 }
 
