@@ -135,6 +135,10 @@ const request={
         return axios.get(`goods`,{
             params
         })
+    },
+    // 商品分类列表
+    getCategories(){
+        return axios.get(`categories?type=3`)
     }
 }
 

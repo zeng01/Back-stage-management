@@ -13,12 +13,20 @@
       </el-col>
     </el-row>
     <!-- 表格 -->
-    <el-table :data="tableData" style="width: 100%" class='users-table'>
-      <el-table-column label="分类名称" width="180">
-        <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+    <el-table :data="tableData" style="width: 100%" class='users-table' row-key="cat_id" border>
+      <el-table-column prop="cat_name" label="分类名称" width="180"></el-table-column>
+      <el-table-column prop="date" label="级别" width="180">
+        <template slot-scope="scope">
+          {{scope.row.cat_level==0?'一级':''}}
+          {{scope.row.cat_level==1?'二级':''}}
+          {{scope.row.cat_level==2?'三级':''}}
+        </template>
       </el-table-column>
-      <el-table-column prop="date" label="级别" width="180"></el-table-column>
-      <el-table-column prop="name" label="是否有效" width="180"></el-table-column>
+      <el-table-column prop="name" label="是否有效" width="180">
+        <template slot-scope="scope">
+          {{scope.row.cat_deleted=false?'有效':'无效'}}
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <el-button type="primary" icon="el-icon-edit" plain class="mini"></el-button>
           <el-button type="danger" icon="el-icon-check" plain class="mini"></el-button>
@@ -33,59 +41,7 @@ export default {
   name: "users",
   data() {
       return {
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-        }],
-        data: [{
-          label: '一级 1',
-          children: [{
-            label: '二级 1-1',
-            children: [{
-              label: '三级 1-1-1'
-            }]
-          }]
-        }, {
-          label: '一级 2',
-          children: [{
-            label: '二级 2-1',
-            children: [{
-              label: '三级 2-1-1'
-            }]
-          }, {
-            label: '二级 2-2',
-            children: [{
-              label: '三级 2-2-1'
-            }]
-          }]
-        }, {
-          label: '一级 3',
-          children: [{
-            label: '二级 3-1',
-            children: [{
-              label: '三级 3-1-1'
-            }]
-          }, {
-            label: '二级 3-2',
-            children: [{
-              label: '三级 3-2-1'
-            }]
-          }]
-        }],
-        defaultProps: {
-          children: 'children',
-          label: 'label'
-        }
-      
+        tableData: [],
       }
     },
     methods: {
@@ -95,10 +51,14 @@ export default {
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
       },
-      // 树形控件后的方法
-      handleNodeClick(data) {
-        console.log(data);
-      }
+
+    },
+    created() {
+      this.$request.getCategories().then(res=>{
+        console.log(res);
+        
+        this.tableData = res.data.data
+      })
     },
 };
 </script>
