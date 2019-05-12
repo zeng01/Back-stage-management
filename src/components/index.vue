@@ -15,16 +15,17 @@
       <el-aside width="200px" class="index-aside">
         <!-- 写上router 会解析成路径 -->
         <el-menu router default-active="2" class="el-menu-vertical-demo">
-          <el-submenu index="1">
+          <!-- index的值要是字符串，所以拼接一个‘’转成字符串 -->
+          <el-submenu v-for="(item, index) in this.$store.state.menuList" :key="index" :index="index+''">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{item.authName}}</span>
             </template>
-              <el-menu-item index="users">
-                <i class="el-icon-menu"></i>用户列表
+              <el-menu-item v-for="(it, i) in item.children" :key="i" :index="it.path">
+                <i class="el-icon-menu"></i>{{it.authName}}
                 </el-menu-item>
           </el-submenu>
-          <el-submenu index="2">
+          <!-- <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>权限管理</span>
@@ -68,7 +69,7 @@
               <el-menu-item index="report">
                 <i class="el-icon-menu"></i>数据报表
                 </el-menu-item>
-          </el-submenu>
+          </el-submenu> -->
         </el-menu>
       </el-aside>
       <el-main class="index-main">
@@ -81,6 +82,11 @@
 <script>
 export default {
   name: "index",
+  data() {
+    return {
+      menuList:[]
+    }
+  },
   beforeCreate() {
     if(!sessionStorage.getItem('token')){
       this.$message.error('请先登录')
@@ -103,6 +109,13 @@ export default {
         })
       
     }
+  },
+  created() {
+    this.$request.getMenus().then(res=>{
+      // this.menuList=res.data.data
+      // 把数据传到公共仓库
+      this.$store.commit('getMenuList',res.data.data)
+    })
   },
 };
 </script>

@@ -125,6 +125,10 @@ const request={
         return axios.post(`roles/${params.roleId}/rights`,{
             rids:params.rids
         })
+    },
+    // 左侧菜单权限
+    getMenus(){
+        return axios.get(`menus`)
     }
 }
 

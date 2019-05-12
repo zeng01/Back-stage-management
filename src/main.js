@@ -18,8 +18,13 @@ Vue.config.productionTip = false
 
 // 导入router
 import router from './router'
+
+// 导入store
+import store from './store'
+
 new Vue({
   render: h => h(App),
   // 挂载到vue实例
-  router
+  router,
+  store
 }).$mount('#app')
