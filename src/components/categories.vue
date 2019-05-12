@@ -55,9 +55,9 @@ export default {
     },
     created() {
       this.$request.getCategories().then(res=>{
-        console.log(res);
-        
-        this.tableData = res.data.data
+        if(res.data.meta.status==200){
+          this.tableData = res.data.data
+        }
       })
     },
 };

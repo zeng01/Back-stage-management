@@ -139,7 +139,16 @@ const request={
     // 商品分类列表
     getCategories(){
         return axios.get(`categories?type=3`)
-    }
+    },
+
+    // 获取静态参数
+    getStatus(id){
+        return axios.get(`categories/${id}/attributes?sel=only`)
+    },
+    // 获取动态参数
+    getDynamic(id){
+        return axios.get(`categories/${id}/attributes?sel=many`)
+    },
 }
 
 // 暴露 install方法
