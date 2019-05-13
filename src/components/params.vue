@@ -26,7 +26,7 @@
     <!-- tab标签 -->
     <el-tabs v-model="activeName">
     <el-tab-pane label="动态参数" name="first">
-        <el-button type="primary" disabled class='small'>添加动态参数</el-button>
+        <el-button type="primary" :disabled='disabled' class='small'>添加动态参数</el-button>
         <!-- 表格 -->
         <el-table :data="dynamicTable" style="width: 100%" class='users-table' border>
             <el-table-column type="index" label="#" width="40"></el-table-column>
@@ -40,7 +40,7 @@
         </el-table>
     </el-tab-pane>
     <el-tab-pane label="静态参数" name="second">
-        <el-button type="primary" disabled class='small'>添加静态参数</el-button>
+        <el-button type="primary" :disabled='disabled' class='small'>添加静态参数</el-button>
         <!-- 表格 -->
         <el-table :data="statusTable" style="width: 100%" class='users-table' border>
           <el-table-column type="index" label="#" width="40"></el-table-column>
@@ -76,7 +76,8 @@ export default {
         // 静态数据
         statusTable:[],
         // 动态数据
-        dynamicTable:[]
+        dynamicTable:[],
+        disabled:true
       }
     },
     methods: {
@@ -96,6 +97,7 @@ export default {
             console.log(res);
             if(res.data.meta.status==200){
               this.statusTable=res.data.data
+              this.disabled=false
             }
           })
           // 动态数据
@@ -103,6 +105,7 @@ export default {
             console.log(res);
             if(res.data.meta.status==200){
               this.dynamicTable=res.data.data
+              this.disabled=false
             }
           })
         }
