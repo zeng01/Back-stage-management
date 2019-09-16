@@ -109,7 +109,7 @@ export default {
 
 
     this.$request.getReport().then(res=>{
-      console.log(res);
+      // console.log(res);
       if(res.data.meta.status==200){
         const data=res.data.data
         for (const key in data) {

@@ -32,7 +32,14 @@
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
-            <el-tab-pane name='1' label="商品参数">商品参数</el-tab-pane>
+            <el-tab-pane name='1' label="商品参数">
+                <el-tabs v-model="activeName" @tab-click="handleClick">
+                    <el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
+                    <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+                    <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+                    <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+                </el-tabs>
+            </el-tab-pane>
             <el-tab-pane name='2' label="商品属性">商品属性</el-tab-pane>
             <el-tab-pane name='3' label="商品图片">商品图片</el-tab-pane>
             <el-tab-pane name='4' label="商品内容">商品内容</el-tab-pane>
@@ -44,11 +51,13 @@
 export default {
     data() {
         return {
+            activeName: 'second',
             active:"0",
             ruleForm: {
                 goods_name:'',
                 goods_weight:'',
                 goods_num:'',
+                goods_cat:'',
             },
             rules: {
                 goods_name: [
@@ -59,7 +68,7 @@ export default {
                 ],
                 goods_num: [
                     { required: true, message: '商品数量不能为空', trigger: 'blur'},
-                ]
+                ],
             },
             options:[{
                value: 'zhinan',
@@ -87,6 +96,9 @@ export default {
         },
         handleChange(value) {
             console.log(value);
+        },
+        handleClick(tab, event) {
+            console.log(tab, event);
         }
     }
 }

@@ -3,7 +3,7 @@
     <el-header class="index-header">
       <el-row>
         <el-col :span="4">
-          <img src="../assets/images/logo.png" alt="">
+          <img src="../assets/images/logo.png" alt="" class='logo'>
         </el-col>
         <el-col :span="19" class='header-center'>后台管理系统</el-col>
         <el-col :span="1">
@@ -113,6 +113,8 @@ export default {
   },
   created() {
     this.$request.getMenus().then(res=>{
+      console.log(res.data.data);
+      
       // this.menuList=res.data.data
       // 把数据传到公共仓库
       this.$store.commit('getMenuList',res.data.data)
@@ -127,9 +129,6 @@ export default {
   .index-header {
     background: #92b2c4;
     line-height: 60px;
-    img{
-      height: 60px;
-    }
     .header-center{
       color:#fff;
       font-size: 26px;
@@ -141,6 +140,9 @@ export default {
   }
   .index-main {
     background: #dee9f3;
+  }
+  .logo{
+    height: 60px;
   }
 }
 </style>

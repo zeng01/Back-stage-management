@@ -13,7 +13,7 @@
       </el-col>
     </el-row>
     <!-- 表格 -->
-    <el-table :data="tableData" style="width: 100%" class='users-table' row-key="cat_id" border>
+    <el-table :data="tableData" style="width: 100%" class='users-table' row-key="cat_id" border v-loading="loading">
       <el-table-column prop="cat_name" label="分类名称" width="180"></el-table-column>
       <el-table-column prop="date" label="级别" width="180">
         <template slot-scope="scope">
@@ -42,6 +42,7 @@ export default {
   data() {
       return {
         tableData: [],
+        loading:true
       }
     },
     methods: {
@@ -54,9 +55,11 @@ export default {
 
     },
     created() {
+      this.loading=true
       this.$request.getCategories().then(res=>{
         if(res.data.meta.status==200){
           this.tableData = res.data.data
+          this.loading=false
         }
       })
     },
